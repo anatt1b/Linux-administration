@@ -1,0 +1,20 @@
+# Virtual environment
+venv/
+
+# Python cache & temporary files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Environment
+.env
+
+# Logs and tempfiles
+
+*.log
+*.tmp
+
+# OS & editor junk
+.DS_store
+Thumbs.db
