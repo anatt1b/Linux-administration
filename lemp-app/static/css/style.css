@@ -45,3 +45,12 @@ h2 { margin-top: 0; font-size: 22px; }
 }
 
 footer { text-align:center; margin-top: 22px; opacity: .7; font-size: 14px; }
+a {
+  color: #8ab4f8;
+  text-decoration: none;
+  font-weight: 500;
+}
+a:hover {
+  color: #b3d4ff;
+  text-decoration: underline;
+}
