@@ -1,24 +1,25 @@
-from flask import Flask
+from flask import Flask, render_template
 import mysql.connector
+from datetime import datetime
 
 app = Flask(__name__)
 
-@app.route('/')
+@app.route("/")
 def home():
-# Connect to MySQL
-	conn = mysql.connector.connect(
-	host="localhost",
-	user="exampleuser",
-	password="nuutti14",
-	database="exampledb"
-)
-	cursor = conn.cursor()
-	cursor.execute("SELECT 'Hello From MySQL!'")
-	result = cursor.fetchone()
-	# Clean up
-	cursor.close()
-	conn.close()
-	return f"<h1>LEMP flask</h1><p>SQL Server Time: {reuslt[0]}"
+    conn = mysql.connector.connect(
+        host="localhost",
+        user="exampleuser",
+        password="nuutti14",
+        database="exampledb"
+    )
+    cur = conn.cursor()
+    cur.execute("SELECT NOW();")
+    result = cur.fetchone()
+    cur.close(); conn.close()
 
-if __name__=='__main__':
-	app.run(host='0.0.0.0', port=5000)
+    sql_time = result[0]  # MySQL DATETIME
+    return render_template("index.html", sql_time=sql_time, year=datetime.now().year)
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000)
+
