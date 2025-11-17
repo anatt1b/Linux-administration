@@ -5,7 +5,7 @@ import plotly.express as px
 def main():
     st.title("Oulun säädata")
 
-    df = pd.read_csv("Oulu.csv", sep=';')
+    df = pd.read_csv("pages/Oulu.csv", sep=';')
 
     # Muutetaan sarakkeiden nimet selkeämmiksi
     df = df.rename(columns={
