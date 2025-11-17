@@ -1,6 +1,6 @@
 import streamlit as st 
 import pandas as pd
-import plotly.expres as px
+import plotly.express as px
 
 def main():
     st.title("Plot some data")
