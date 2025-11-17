@@ -8,9 +8,9 @@ app = Flask(__name__)
 def home():
     conn = mysql.connector.connect(
         host="localhost",
-        user="exampleuser",
-        password="examplepassword",
-        database="exampledb"
+        user="streamlit_user",
+        password="streamlit",
+        database="weather"
     )
     cur = conn.cursor()
     cur.execute("SELECT NOW();")
