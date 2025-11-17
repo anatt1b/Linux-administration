@@ -9,5 +9,5 @@ def main():
     ff = px.scatter(df, x="Date", y="Oulu")
     st.plotly_chart(ff, use_container_width=True)
 
-if__name__ == "__main__":
+if __name__ == "__main__":
     main()
