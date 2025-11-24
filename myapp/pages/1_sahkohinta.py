@@ -64,7 +64,7 @@ def main():
     df = load_data()
 
     # Nykyinen aikaleima (ilman aikavyöhykettä)
-    now = now_fi.replace(tzinfo=None)
+    now = now_fi
 
     # Etsi rivi, jossa nyt on start_time–end_time sisällä
     current_row = df[(df["start_time"] <= now) & (df["end_time"] > now)]
