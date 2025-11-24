@@ -135,7 +135,7 @@ def main():
     # Aikasarja-käyrä historiadatasta
     # ----------------------------------------
     if not df.empty:
-        st.subheader("📉 Sähkön hinta (viimeiset 200 jaksoa)")
+        st.subheader("📉 Sähkön hinta")
         st.line_chart(df.set_index("start_time")["hinta_sentit_kwh"])
     else:
         st.warning("Historiadataa ei löytynyt tietokannasta.")
