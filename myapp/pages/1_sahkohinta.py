@@ -5,20 +5,16 @@ from datetime import datetime
 from zoneinfo import ZoneInfo
 from streamlit_autorefresh import st_autorefresh
 
-# -----------------------------
 # Sivun asetukset
-# -----------------------------
 st.set_page_config(
     page_title="Sähkön Spot-hinta",
     page_icon="⚡",
     layout="wide",
 )
 
-# -----------------------------
-# MySQL -> DataFrame
-# -----------------------------
-@st.cache_data(ttl=300)
+@st.cache_data(ttl=300)  # cache 5 min
 def load_data():
+    """Lataa viimeisimmät sähkön spot-hinnat MySQL:stä."""
     conn = mysql.connector.connect(
         host="localhost",
         user="sahkonseuraaja",
@@ -40,39 +36,41 @@ def load_data():
     df = pd.read_sql(query, conn)
     conn.close()
 
+    # varmisteaan, että aikakentät ovat datetime-tyyppiä ilman aikavyöhykettä
     df["start_time"] = pd.to_datetime(df["start_time"])
     df["end_time"] = pd.to_datetime(df["end_time"])
 
-    return df.sort_values("start_time")
+    # varmuuden vuoksi järjestys aikajärjestykseen
+    df = df.sort_values("start_time")
 
-# -----------------------------
-# Sovellus
-# -----------------------------
+    return df
+
+
 def main():
-
     st.title("⚡ Sähkön Spot-hinta 📈 Pörssisähkö (Nord Pool / API)")
     st.caption("Data päivittyy 15 min välein cronin avulla.")
 
-    # Automaattinen päivitys 1 sek välein
+    # automaattinen sivun päivitys 1 s välein, jotta kello rullaa
     st_autorefresh(interval=1000, key="clock-refresh")
 
-    # Suomen aika ruudulle
+    # Suomen aika näytölle (aikavyöhykkeen kanssa)
     now_fi = datetime.now(ZoneInfo("Europe/Helsinki"))
     st.info(f"Suomen aika: {now_fi:%Y-%m-%d %H:%M:%S}")
 
-    # Lataa hinnat
+    # Ladataan hinnat
     df = load_data()
 
-    # Nykyinen aikaleima (ilman aikavyöhykettä)
-    now = now_fi
+    # Tehdään "naive"-aika vertailua varten (ilman tz:tä),
+    # koska tietokannan DATETIME-kentät ovat myös ilman tz:tä.
+    now = now_fi.replace(tzinfo=None)
 
-    # Etsi rivi, jossa nyt on start_time–end_time sisällä
+    # Etsitään se rivi, jonka aikaväli sisältää nykyhetken
     current_row = df[(df["start_time"] <= now) & (df["end_time"] > now)]
 
     if not current_row.empty:
         current_price = float(current_row.iloc[0]["hinta_sentit_kwh"])
     else:
-        # fallback
+        # fallback – jos ei löydy (ei pitäisi tapahtua), otetaan uusin rivi
         current_price = float(df.iloc[-1]["hinta_sentit_kwh"])
 
     # Värikoodaus
@@ -100,11 +98,14 @@ def main():
         unsafe_allow_html=True,
     )
 
+    # Aikasarja
     st.subheader("📈 Sähkön hinta")
     st.line_chart(df.set_index("start_time")["hinta_sentit_kwh"])
 
-    st.subheader("🧾 Raakadatat (uusin ensin)")
+    # Taulukko (uusin ensin)
+    st.subheader("📄 Raakadatadat (uusin ensin)")
     st.dataframe(df.iloc[::-1])
+
 
 if __name__ == "__main__":
     main()
