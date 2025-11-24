@@ -33,6 +33,7 @@ r = requests.get(URL)
 r.raise_for_status()
 data = r.json()
 prices = data["prices"]      # lista tunneista / 15 min jaksoista
+print("DEBUG, latest item from API:", prices[-1])
 
 inserted = 0
 
