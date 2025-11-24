@@ -102,10 +102,5 @@ def main():
     st.subheader("📈 Sähkön hinta")
     st.line_chart(df.set_index("start_time")["hinta_sentit_kwh"])
 
-    # Taulukko (uusin ensin)
-    st.subheader("📄 Raakadatadat (uusin ensin)")
-    st.dataframe(df.iloc[::-1])
-
-
 if __name__ == "__main__":
     main()
