@@ -22,22 +22,24 @@ def load_data():
         database="energy_db",
     )
 
-    cursor = conn.cursor()
-
     query = """
-    SELECT  hinta_eur_mwh,
-            hinta_sentit_kwh,
-            start_time,
-            end_time
-    FROM sahkonhinta
-    ORDER BY start_time DESC
-    LIMIT 200;
+        SELECT  hinta_eur_mwh,
+                hinta_sentit_kwh,
+                start_time,
+                end_time
+        FROM sahkonhinta
+        ORDER BY start_time DESC
+        LIMIT 200;
     """
 
     df = pd.read_sql(query, conn)
     conn.close()
 
-    # Aikajärjestys vanhimmasta uusimpaan
+    # varmistetaan että aikakentät ovat datetime-tyyppiä (ilman aikavyöhykettä)
+    df["start_time"] = pd.to_datetime(df["start_time"])
+    df["end_time"] = pd.to_datetime(df["end_time"])
+
+    # järjestys aikajärjestykseen (vanhin ensin)
     df = df.sort_values("start_time")
     return df
 
@@ -46,26 +48,28 @@ def main():
     st.title("⚡ Sähkön Spot-hinta 📈 Pörssisähkö (Nord Pool / API)")
     st.caption("Data päivittyy 15 min välein cronin avulla.")
 
-    # Autorefresh jotta kello & hinta päivittyy
+    # automaattinen sivun päivitys 1 s välein, jotta kello rullaa
     st_autorefresh(interval=1000, key="clock-refresh")
 
-    now = pd.datetime.now(ZoneInfo("Europe/Helsinki"))
-    st.info(f"Suomen aika: {now:%Y-%m-%d %H:%M:%S}")
+    # Suomen aika (käytetään näyttöön)
+    now_fi = datetime.now(ZoneInfo("Europe/Helsinki"))
+    st.info(f"Suomen aika: {now_fi:%Y-%m-%d %H:%M:%S}")
 
+    # Ladataan hinnat
     df = load_data()
 
-    # ---------- UUSI HINNAN VALINTALOGIIKKA ----------
-    # Valitaan se rivi, jonka aikaväliin nykyhetki osuu
+    # Tehdään "naive"-aika vertailua varten (ilman aikavyöhykettä),
+    # koska tietokannan DATETIME-kentät ovat myös ilman tz:tä.
+    now = now_fi.replace(tzinfo=None)
+
+    # Etsitään se rivi, jonka aikaväliin nykyhetki osuu
     current_row = df[(df["start_time"] <= now) & (df["end_time"] > now)]
 
     if not current_row.empty:
         current_price = float(current_row.iloc[0]["hinta_sentit_kwh"])
     else:
-        # Jos nykyhetkeä vastaavaa tuntia ei löydy (ei pitäisi tapahtua),
-        # käytetään varmuuden vuoksi viimeisintä riviä
-        latest = df.iloc[-1]
-        current_price = float(latest["hinta_sentit_kwh"])
-    # -------------------------------------------------
+        # fallback – jos jostain syystä ei löydy, otetaan uusin rivi
+        current_price = float(df.iloc[-1]["hinta_sentit_kwh"])
 
     # Värikoodaus
     if current_price < 8:
@@ -96,8 +100,8 @@ def main():
     st.subheader("📉 Sähkön hinta")
     st.line_chart(df.set_index("start_time")["hinta_sentit_kwh"])
 
-    # Taulukko
-    st.subheader("📄 Raakadatat (uusin ensin)")
+    # Taulukko (uusin ensin)
+    st.subheader("📑 Raakadatat (uusin ensin)")
     st.dataframe(df.iloc[::-1])
 
 
