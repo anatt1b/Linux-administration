@@ -1,6 +1,8 @@
 import streamlit as st
 import pandas as pd
 import mysql.connector
+from datetime import datetime
+from zoneinfo import ZoneInfo
 
 
 # Sivun asetukset
@@ -41,6 +43,9 @@ def load_data():
 def main():
     st.title("⚡ Sähkön Spot-hinta – Pörssisähkö (Nord Pool / API)")
     st.caption("Data päivittyy 15 min välein cronin avulla.")
+    now = datetime.now(ZoneInfo("Europe/Helsinki"))
+    st.info(f"Nyt kello (Suomen aika): {now:%Y-%m-%d %H:%M:%S}")
+
 
     df = load_data()
 
@@ -74,7 +79,7 @@ def main():
     )
 
     # Aikasarja
-    st.subheader("📉 Sähkön hinnan aikasarja (200 viime tuntia)")
+    st.subheader("📉 Sähkön hinta")
     st.line_chart(df.set_index("start_time")["hinta_sentit_kwh"])
 
     # Taulukko
