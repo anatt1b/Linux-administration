@@ -44,7 +44,7 @@ def load_data():
 def main():
     st.title("⚡ Sähkön Spot-hinta – Pörssisähkö (Nord Pool / API)")
     st.caption("Data päivittyy 15 min välein cronin avulla.")
-    st_autorefresh(interval=5000, key="clock-refresh")
+    st_autorefresh(interval=1000, key="clock-refresh")
     now = datetime.now(ZoneInfo("Europe/Helsinki"))
     st.info(f"Suomen aika: {now:%Y-%m-%d %H:%M:%S}")
 
