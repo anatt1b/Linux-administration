@@ -1,68 +1,86 @@
 import streamlit as st
-import mysql.connector
 import pandas as pd
+import mysql.connector
 
-st.set_page_config(page_title="Sähkön Spot-hinta", page_icon="⚡")
 
-st.title("⚡ Sähkön Spot-hinta – Pörssisähkö (Nord Pool / API)")
-st.caption("Data päivittyy 15 min välein cronin avulla.")
-
-# MySQL-yhteys
-conn = mysql.connector.connect(
-    host="localhost",
-    user="sahkonseuraaja",
-    password="Kekkonen11!",
-    database="energy_db"
+# Sivun asetukset
+st.set_page_config(
+    page_title="Sähkön Spot-hinta",
+    page_icon="⚡",
+    layout="wide",
 )
 
-query = """
-SELECT hinta_eur_mwh,
-       hinta_sentit_kwh,
-       start_time,
-       end_time
-FROM sahkonhinta
-ORDER BY start_time DESC
-LIMIT 200;
-"""
 
-df = pd.read_sql(query, conn)
-conn.close()
+@st.cache_data(ttl=300)  # cache 5 min
+def load_data():
+    """Lataa viimeisimmät sähkön spot-hinnat MySQL:stä."""
+    conn = mysql.connector.connect(
+        host="localhost",
+        user="sahkonseuraaja",
+        password="Kekkonen11!",
+        database="energy_db"
+    )
 
-# Järjestys alhaalta ylös (aikajärjestys)
-df = df.sort_values("start_time")
+    query = """
+        SELECT hinta_eur_mwh,
+               hinta_sentit_kwh,
+               start_time,
+               end_time
+        FROM sahkonhinta
+        ORDER BY start_time DESC
+        LIMIT 200;
+    """
 
-# Nykyinen (viimeisin) hinta
-latest = df.iloc[-1]
-current_price = latest["hinta_sentit_kwh"]
+    df = pd.read_sql(query, conn)
+    conn.close()
 
-# Hintalaatikon värikoodaus
-if current_price < 8:
-    color = "green"
-elif current_price < 15:
-    color = "orange"
-else:
-    color = "red"
+    df = df.sort_values("start_time")
+    return df
 
-st.markdown(
-    f"""
-    <div style="
-        background-color:{color};
-        padding:20px;
-        border-radius:10px;
-        color:white;
-        text-align:center;
-        font-size:28px;
-        font-weight:bold;">
-        Nykyinen tuntihinta: {current_price:.2f} snt/kWh
-    </div>
-    """,
-    unsafe_allow_html=True
-)
 
-st.subheader("📉  Sähkön hinnan aikasarja (200 viime tuntia)")
-st.line_chart(
-    df.set_index("start_time")["hinta_sentit_kwh"]
-)
+def main():
+    st.title("⚡ Sähkön Spot-hinta – Pörssisähkö (Nord Pool / API)")
+    st.caption("Data päivittyy 15 min välein cronin avulla.")
 
-st.subheader("📄  Raakadatat (uusin ensin)")
-st.dataframe(df.iloc[::-1])
+    df = load_data()
+
+    # Viimeisin hinta
+    latest = df.iloc[-1]
+    current_price = float(latest["hinta_sentit_kwh"])
+
+    # Värikoodaus
+    if current_price < 8:
+        color = "green"
+    elif current_price < 15:
+        color = "orange"
+    else:
+        color = "red"
+
+    # Näyttölaatikko
+    st.markdown(
+        f"""
+        <div style="
+            background-color:{color};
+            padding:20px;
+            border-radius:10px;
+            color:white;
+            text-align:center;
+            font-size:28px;
+            font-weight:bold;">
+            Nykyinen tuntihinta: {current_price:.2f} snt/kWh
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    # Aikasarja
+    st.subheader("📉 Sähkön hinnan aikasarja (200 viime tuntia)")
+    st.line_chart(df.set_index("start_time")["hinta_sentit_kwh"])
+
+    # Taulukko
+    st.subheader("📄 Raakadatat (uusin ensin)")
+    st.dataframe(df.iloc[::-1])
+
+
+if __name__ == "__main__":
+    main()
