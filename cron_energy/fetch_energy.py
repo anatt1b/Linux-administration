@@ -39,8 +39,8 @@ latest = prices[-1]
 
 start = datetime.fromisoformat(latest["startDate"])
 end = datetime.fromisoformat(latest["endDate"])
-eur_mwh = float(latest["price"])
-cents_kwh = eur_mwh / 10   # muutos €/MWh -> snt/kWh
+cents_kwh = float(latest["price"])
+eur_mwh = cents_kwh * 10   # muutos €/MWh -> snt/kWh
 
 # Tarkistetaan onko tämä tunti jo tietokannassa
 cursor.execute(
