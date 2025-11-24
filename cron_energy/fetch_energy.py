@@ -62,7 +62,7 @@ start_time = start_utc.astimezone(ZoneInfo("Europe/Helsinki"))
 end_time   = end_utc.astimezone(ZoneInfo("Europe/Helsinki"))
 
 cents_kwh = float(p["price"])
-#eur_mwh = cents_kwh * 10.0
+eur_mwh = cents_kwh * 10.0
 
 print(
     "DEBUG: chosen period:",
