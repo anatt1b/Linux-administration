@@ -18,7 +18,7 @@ def load_data():
     conn = mysql.connector.connect(
         host="localhost",
         user="sahkonseuraaja",
-        password="Kekkonen11",
+        password="Kekkonen11!",
         database="energy_db",
     )
 
@@ -49,7 +49,7 @@ def main():
     # Autorefresh jotta kello & hinta päivittyy
     st_autorefresh(interval=1000, key="clock-refresh")
 
-    now = datetime.now(ZoneInfo("Europe/Helsinki"))
+    now = pd.datetime.now(ZoneInfo("Europe/Helsinki"))
     st.info(f"Suomen aika: {now:%Y-%m-%d %H:%M:%S}")
 
     df = load_data()
