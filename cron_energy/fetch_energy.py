@@ -9,7 +9,7 @@ URL = "https://api.porssisahko.net/v2/latest-prices.json"
 conn = mysql.connector.connect(
     host="localhost",
     user="sahkonseuraaja",
-    password="Kekkonen11",
+    password="Kekkonen11!",
     database="energy_db"
 )
 
