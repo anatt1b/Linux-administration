@@ -7,9 +7,9 @@ from datetime import datetime
 URL = "https://api.porssisahko.net/v2/latest-prices.json"
 
 conn = mysql.connector.connect(
-    host="localhost"
-    user="sahkonseuraaja"
-    password="Kekkonen11!"
+    host="localhost",
+    user="sahkonseuraaja",
+    password="Kekkonen11!",
     database="energy_db"
 )
 
@@ -20,7 +20,7 @@ cursor.execute("""
                id INT AUTO_INCREMENT PRIMARY KEY,
                hinta_eur_mwh FLOAT,
                hinta_sentit_kwh FLOAT,
-               start_time DATE_TIME,
+               start_time DATETIME,
                end_time DATETIME,
                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)
                """)
@@ -44,7 +44,7 @@ for p in prices:
     cursor.execute("""
                    INSERT INTO sahkonhinta (hinta_eur_mwh, hinta_sentit_kwh, start_time, end_time)
                    VALUES(%s, %s, %s, %s)
-                   """, eur_mwh, cents_kwh, start, end))
+                   """, (eur_mwh, cents_kwh, start, end))
     inserted += 1
 
 conn.commit()
