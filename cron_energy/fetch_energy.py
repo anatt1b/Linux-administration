@@ -38,7 +38,7 @@ inserted = 0
 for p in prices:
     start = datetime.fromisoformat(p["startDate"])
     end = datetime.fromisoformat(p["endDate"])
-    eur_mwh = float(p["hinta"])
+    eur_mwh = float(p["price"])
     cents_kwh = eur_mwh / 10 # muutos €/MWh -> snt/KWh
 
     cursor.execute("""
