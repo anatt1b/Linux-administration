@@ -6,9 +6,9 @@ from zoneinfo import ZoneInfo
 from streamlit_autorefresh import st_autorefresh
 
 
-# -------------------------------------------------
+
 # SIVUN ASETUKSET
-# -------------------------------------------------
+
 st.set_page_config(
     page_title="Säädata",
     page_icon="⛅",
@@ -16,9 +16,9 @@ st.set_page_config(
 )
 
 
-# -------------------------------------------------
+
 # Tietokannasta lukeminen
-# -------------------------------------------------
+
 @st.cache_data(ttl=300)  # cache 5 min
 def load_weather_data():
     """Lataa viimeisimmät säähavainnot MySQL:stä."""
@@ -65,9 +65,9 @@ def main():
         st.warning("Tietokannassa ei ole vielä säädataa.")
         return
 
-    # -------------------------------------------------
-    # Nykyinen säähavainto (uusin rivi)
-    # -------------------------------------------------
+    
+    # Nykyinen säähavainto
+   
     latest = df.iloc[0]
     city = latest["city"]
     temp = float(latest["temperature"])
@@ -104,18 +104,18 @@ def main():
 
     st.write("")  # pieni väli
 
-    # -------------------------------------------------
+    
     # Aikasarja (lämpötila vs. aika)
-    # -------------------------------------------------
+   
     st.subheader("🌡 Lämpötila ajan funktiona")
 
     # piirretään taulukko aikajärjestyksessä vanhin ensin
     df_sorted = df.sort_values("timestamp")
     st.line_chart(df_sorted.set_index("timestamp")["temperature"])
 
-    # -------------------------------------------------
+  
     # Raakadatat
-    # -------------------------------------------------
+    
     st.subheader("📄 Raakadatat (uusin ensin)")
     st.dataframe(df)
 
