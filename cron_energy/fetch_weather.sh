@@ -16,7 +16,7 @@ source $VENV_DIR/bin/activate
 if [ -f "requirements.txt" ]; then
     echo "Asennetaan riippuuvuudet..."
     pip install --upgrade pip
-    pip install - r requirements.txt
+    pip install -r requirements.txt
 else
     echo "requirements.txt ei löytynyt!"
 fi
