@@ -15,5 +15,5 @@ st.write(
 st.subheader("Pikalinkit")
 
 # Sivujen polut suhteessa app.py:hen
-st.page_link("pages/sää.py", label="🌦️ Kempeleen säädata", icon="🌦️")
+st.page_link("pages/2_sää.py", label="🌦️ Kempeleen säädata", icon="🌦️")
 st.page_link("pages/1_sahkohinta.py", label="⚡ Sähkön spot-hinta", icon="⚡")
