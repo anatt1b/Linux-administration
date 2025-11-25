@@ -2,6 +2,7 @@
 import requests 
 import mysql.connector
 from datetime import datetime
+from zoneinfo import ZoneInfo
 
 #API-asetukset
 API_KEY = '36b67d684d77fe66ddb5180713312198'
@@ -37,7 +38,7 @@ data = response.json()
 # Poimitaan halutut arvot
 temp = data['main']['temp']
 desc = data['weather'][0]['description']
-timestamp = datetime.now()
+timestamp = datetime.now(ZoneInfo("Europe/Helsinki"))
 
 # Tallennetaan tiedot tietokantaan
 cursor.execute('INSERT INTO weather_data (city, temperature, description, timestamp) VALUES (%s,%s,%s,%s)', (CITY, temp, desc, timestamp))
