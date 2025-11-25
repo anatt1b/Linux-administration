@@ -19,7 +19,7 @@ st.set_page_config(
 # -------------------------------
 # MySQL -> DataFrame
 # -------------------------------
-@st.cache_data(ttl=300)  # välimuisti 5 min
+
 def load_data():
     """Lataa viimeisimmät sähkön spot-hinnat MySQL:stä."""
     conn = mysql.connector.connect(
@@ -86,7 +86,7 @@ def fetch_current_price_api():
 def main():
     st.title("⚡ Sähkön Spot-hinta 📈 Pörssisähkö (Nord Pool / API)")
 
-    st.caption("Data päivittyy 15 min välein cronin avulla.")
+    st.caption("Data päivittyy 15 min välein.")
 
     # Automaattinen uudelleenajo 1 s välein (kello + vihreä laatikko)
     st_autorefresh(interval=1000, key="clock-refresh")
