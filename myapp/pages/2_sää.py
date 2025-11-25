@@ -23,10 +23,10 @@ st.set_page_config(
 def load_weather_data():
     """Lataa viimeisimmät säähavainnot MySQL:stä."""
     conn = mysql.connector.connect(
-        host="localhost",
-        user="saamies",
-        password="Säämies123!",
-        database="weather_db",
+        host='localhost',
+        user='saamies',
+        password='Säämies123!',
+        database='weather_db',
     )
 
     query = """
