@@ -19,7 +19,6 @@ st.set_page_config(
 
 # Tietokannasta lukeminen
 
-@st.cache_data(ttl=300)  # cache 5 min
 def load_weather_data():
     """Lataa viimeisimmät säähavainnot MySQL:stä."""
     conn = mysql.connector.connect(
