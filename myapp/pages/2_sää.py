@@ -52,7 +52,7 @@ def main():
     st.caption("Data päivittyy 15 min välein cronin avulla.")
 
     # automaattinen päivitys (esim. 10 sek välein)
-    st_autorefresh(interval=10_000, key="weather-refresh")
+    st_autorefresh(interval=1000, key="weather-refresh")
 
     # Suomen aika näkyviin
     now_fi = datetime.now(ZoneInfo("Europe/Helsinki"))
