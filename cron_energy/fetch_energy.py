@@ -84,6 +84,9 @@ if not exists:
         INSERT INTO sahkonhinta
         (hinta_eur_mwh, hinta_sentit_kwh, start_time, end_time)
         VALUES (%s, %s, %s, %s)
+        ON DUPLICATE KEY UPDATE
+            hinta_eur_mwh = VALUES(hinta_eur_mwh),
+            hinta_sentit_kwh = VALUES(hinta_sentit_kwh)
         """,
         (eur_mwh, cents_kwh, start_time, end_time),
     )
