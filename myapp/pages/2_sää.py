@@ -26,7 +26,7 @@ def load_weather_data():
         host="localhost",
         user="saamies",
         password="Säämies123!",
-        database="weather_db",
+        database="weather_db"
     )
 
     query = """
@@ -107,7 +107,7 @@ def main():
     
     # Aikasarja (lämpötila vs. aika)
    
-    st.subheader("🌡 Lämpötila ajan funktiona")
+    st.subheader("🌡 Lämpötila")
 
     # piirretään taulukko aikajärjestyksessä vanhin ensin
     df_sorted = df.sort_values("timestamp")
@@ -116,7 +116,7 @@ def main():
   
     # Raakadatat
     
-    st.subheader("📄 Raakadatat (uusin ensin)")
+    st.subheader("📄 Kempele sää")
     st.dataframe(df)
 
 

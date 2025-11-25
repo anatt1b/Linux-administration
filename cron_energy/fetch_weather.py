@@ -12,7 +12,7 @@ URL = f'https://api.openweathermap.org/data/2.5/weather?q={CITY}&appid={API_KEY}
 conn = mysql.connector.connect(
     host='localhost',
     user='saamies',
-    password='Säämies123!'
+    password='Säämies123!',
     database='weather_db'
 )
 cursor = conn.cursor()
