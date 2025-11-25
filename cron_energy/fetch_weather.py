@@ -5,7 +5,7 @@ from datetime import datetime
 from zoneinfo import ZoneInfo
 
 #API-asetukset
-API_KEY = '36b67d684d77fe66ddb5180713312198'
+API_KEY = 'YOUR_API_KEY'
 CITY = 'Kempele'
 URL = f'https://api.openweathermap.org/data/2.5/weather?q={CITY}&appid={API_KEY}&units=metric'
 
