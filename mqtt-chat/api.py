@@ -29,4 +29,4 @@ def get_messages():
     conn.close()
     return jsonify(messages[::-1])
 if __name__ == '__main__':
-    app.run(host='127.0.0.1', port=5005)
+    app.run(host='0.0.0.0', port=5005)
