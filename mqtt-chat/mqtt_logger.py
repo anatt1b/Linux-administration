@@ -102,7 +102,7 @@ def main():
     
     try:
         client.connect(MQTT_BROKER, MQTT_PORT, 60)
-        client.loop_forver()
+        client.loop_forever()
     except KeyboardInterrupt:
         logger.info("Sammutetaan MQTT-logger...")
         client.disconnect()
