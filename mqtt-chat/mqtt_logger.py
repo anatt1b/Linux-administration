@@ -89,5 +89,19 @@ def main():
         logger.info("Tietokantayhteys OK")
     except mysql.connector.Error as err:
         logger.error(f"Ei yhteyttä tietokantaan: {err}")
+        return
+    
+    # MQTT-asiakas
+    client = mqtt.Client(client_id="mqtt_logger")
+    client.on_connect = on_connect
+    client.on_message = on_message
+    
+    try:
+        client.connect(MQTT_BROKER, MQTT_PORT, 60)
+        client.loop_forever()
+    except KeyboardInterrupt:
+        logger.info("Sammutetaan...")
+        client.disconnect()
+        
 if __name__ == "__main__":
     main()
