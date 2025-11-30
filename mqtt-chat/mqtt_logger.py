@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
-'''
+
+"""
 MQTT to MySQL Logger
 Kuuntelee MQTT-viestejä ja tallentaa ne tietokantaan.
-'''
+"""
 
 import json
 import logging
@@ -11,24 +12,24 @@ import paho.mqtt.client as mqtt
 import mysql.connector
 from mysql.connector import pooling
 
-# konfiguraatio
-MQTT_BROKER = 'localhost'
+# Konfiguraatio
+MQTT_BROKER = "localhost"
 MQTT_PORT = 1883
-MQTT_TOPIC = 'chat/messages'
+MQTT_TOPIC = "chat/messages"
 
 DB_CONFIG = {
-    'host': 'localhost',
-    'user': 'mqtt_user',
-    'password': 'Salasana123!',
-    'database': 'mqtt_chat'
+    "host": "localhost",
+    "user": "mqtt_user",
+    "password": "Salasana123!", # Vaihda!
+    "database": "mqtt_chat"
 }
 
-# lokitus
-#logging.basicConfig(
- #   level=logging.INFO,
-  #  format='%(asctime)s - %(levelname)s - %(message)s'
-#)
-#logger = logging.getLogger(__name__)
+# Lokitus
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
 
 # Tietokantapooli
 db_pool = pooling.MySQLConnectionPool(
@@ -36,41 +37,34 @@ db_pool = pooling.MySQLConnectionPool(
     pool_size=5,
     **DB_CONFIG
 )
-
-def save_message(nickname, message, clinet_id):
-    '''Tallentaa viestin tietokantaan'''
+def save_message(nickname, message, client_id):
+    """ Tallenna viesti tietokantaan. """
     try:
         conn = db_pool.get_connection()
         cursor = conn.cursor()
         query = '''
-        INSERT INTO messages (nickname, message, client_id) VALUES (%s, %s, %s)
+        INSERT INTO messages (nickname, message, client_id)
+        VALUES (%s, %s, %s)
         '''
-        cursor.execute(query, (nickname, message, clinet_id))
+        cursor.execute(query, (nickname, message, client_id))
         conn.commit()
-        cursor.close()
-        conn.close()
-        logger.info(f"Viesti tallennettu: [{nickname}]  {message[:50]}...")
+        logger.info(f"Tallennettu: [{nickname}] {message[:50]}...")
     except mysql.connector.Error as err:
         logger.error(f"Tietokantavirhe: {err}")
     finally:
-        if cursor:
-            cursor.close()
-        if conn:
-            conn.close()
-            
+        if cursor: cursor.close()
+        if conn: conn.close()
 def on_connect(client, userdata, flags, rc):
-    '''Yhdistetty MQTT-välittäjään'''
-    print(f"DEBUG: on_connect() rc={rc}")
+    """MQTT-yhteys muodostettu."""
     if rc == 0:
-        logger.info("Yhdistetty MQTT-välittäjään")
+        logger.info("Yhdistetty MQTT-brokeriin")
         client.subscribe(MQTT_TOPIC)
-        logger.info(f"Tilattu aihe: {MQTT_TOPIC}")
+        logger.info(f"Tilattu: {MQTT_TOPIC}")
     else:
-        logger.error(f"Yhdistäminen epäonnistui, koodi: {rc}")
+        logger.error(f"Yhteysvirhe, koodi: {rc}")
         
 def on_message(client, userdata, msg):
-    '''Käsittelee saapuvat MQTT-viestit'''
-    print(f"DEBUG: on_message() topic={msg.topic}, payload={msg.payload}")
+    """Käsittele saapuva MQTT-viesti."""
     try:
         payload = msg.payload.decode('utf-8')
         data = json.loads(payload)
@@ -80,35 +74,21 @@ def on_message(client, userdata, msg):
         if message:
             save_message(nickname, message, client_id)
     except json.JSONDecodeError:
-        logger.warning("Virhellinen JSON: (msg.payload)")
+        logger.warning(f"Virheellinen JSON: {msg.payload}")
     except Exception as e:
-        logger.error(f"Virhe viestin käsittelyssä: {e}")
+        logger.error(f"Virhe: {e}")
         
 def main():
-    '''Pääohjelma'''
-    print("DEBUG: main() start")
-    logger.info("MQtt-logger käynnistyy...")
+    """Pääohjelma."""
+    logger.info("MQTT Logger käynnistyy...")
     
-    #testaa tietokantayhteys
+    # Testaa tietokantayhteys
     try:
         conn = db_pool.get_connection()
         conn.close()
-        logger.info("Yhdistetty tietokantaan onnistuneesti")
+        logger.info("Tietokantayhteys OK")
     except mysql.connector.Error as err:
-        logger.error(f"Tietokantayhteyden testaus epäonnistui: {err}")
+        logger.error(f"Ei yhteyttä tietokantaan: {err}")
         return
-    
-    #MQTT-asiakas
-    client = mqtt.Client(client_id="mqtt_logger")
-    client.on_connect = on_connect
-    client.on_message = on_message
-    
-    try:
-        client.connect(MQTT_BROKER, MQTT_PORT, 60)
-        client.loop_forever()
-    except KeyboardInterrupt:
-        logger.info("Sammutetaan MQTT-logger...")
-        client.disconnect()
-    
-    if __name__ == '__main__':
-        main()
+if __name__ == "__main__":
+    main()
