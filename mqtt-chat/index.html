@@ -288,10 +288,6 @@
 
                 const messages = await response.json();
 
-                // API palauttaa yleensä uusimman ensin, joten käännä järjestys
-                // että vanhin on ylimpänä ja uusin alimpana.
-                messages.reverse();
-
                 messages.forEach(msg => {
                     // msg.nickname, msg.message, msg.client_id, msg.created_at
                     const isOwn = msg.client_id === client.options.clientId;
