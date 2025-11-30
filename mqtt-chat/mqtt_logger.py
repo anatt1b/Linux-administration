@@ -74,7 +74,7 @@ def on_message(client, userdata, msg):
         data = json.loads(payload)
         nickname = data.get('nickname', 'Tuntematon')[:50]
         message = data.get('text', '')
-        client_id = data.get('client_id', '')[:100]
+        client_id = data.get('clientId', '')[:100]
         if message:
             save_message(nickname, message, client_id)
     except json.JSONDecodeError:
