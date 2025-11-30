@@ -89,6 +89,5 @@ def main():
         logger.info("Tietokantayhteys OK")
     except mysql.connector.Error as err:
         logger.error(f"Ei yhteyttä tietokantaan: {err}")
-        return
 if __name__ == "__main__":
     main()
