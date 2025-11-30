@@ -60,6 +60,7 @@ def save_message(nickname, message, clinet_id):
             
 def on_connect(client, userdata, flags, rc):
     '''Yhdistetty MQTT-välittäjään'''
+    print(f"DEBUG: on_connect() rc={rc}")
     if rc == 0:
         logger.info("Yhdistetty MQTT-välittäjään")
         client.subscribe(MQTT_TOPIC)
@@ -69,6 +70,7 @@ def on_connect(client, userdata, flags, rc):
         
 def on_message(client, userdata, msg):
     '''Käsittelee saapuvat MQTT-viestit'''
+    print(f"DEBUG: on_message() topic={msg.topic}, payload={msg.payload}")
     try:
         payload = msg.payload.decode('utf-8')
         data = json.loads(payload)
@@ -84,6 +86,7 @@ def on_message(client, userdata, msg):
         
 def main():
     '''Pääohjelma'''
+    print("DEBUG: main() start")
     logger.info("MQtt-logger käynnistyy...")
     
     #testaa tietokantayhteys
