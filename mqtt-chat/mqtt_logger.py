@@ -24,11 +24,11 @@ DB_CONFIG = {
 }
 
 # lokitus
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s'
-)
-logger = logging.getLogger(__name__)
+#logging.basicConfig(
+ #   level=logging.INFO,
+  #  format='%(asctime)s - %(levelname)s - %(message)s'
+#)
+#logger = logging.getLogger(__name__)
 
 # Tietokantapooli
 db_pool = pooling.MySQLConnectionPool(
