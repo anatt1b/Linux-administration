@@ -258,11 +258,12 @@
             }
         });
         
-        function addMessage(nickname, text, isOwn) {
+        function addMessage(nickname, text, isOwn, createdAt) {
             const messageDiv = document.createElement('div');
             messageDiv.className = 'message' + (isOwn ? ' own' : '');
             
-            const time = new Date().toLocaleTimeString('fi-FI', {
+            const timeSource = createdAt ? new Date(createdAt) : new Date();
+            const time = timeSource.toLocaleTimeString('fi-FI', {
                 hour: '2-digit',
                 minute: '2-digit'
             });
@@ -275,7 +276,36 @@
             messagesDiv.appendChild(messageDiv);
             messagesDiv.scrollTop = messagesDiv.scrollHeight;
         }
-        
+        // Lataa chat-historia palvelimelta
+        async function loadHistory() {
+            try {
+                // haetaan viimeiset 50 viestiä
+                const response = await fetch('/api/messages?limit=50');
+                if (!response.ok) {
+                    console.error('Historiaa ei voida ladata:', response.status);
+                    return;
+                }
+
+                const messages = await response.json();
+
+                // API palauttaa yleensä uusimman ensin, joten käännä järjestys
+                // että vanhin on ylimpänä ja uusin alimpana.
+                messages.reverse();
+
+                messages.forEach(msg => {
+                    // msg.nickname, msg.message, msg.client_id, msg.created_at
+                    const isOwn = msg.client_id === client.options.clientId;
+                    addMessage(msg.nickname, msg.message, isOwn, msg.created_at);
+                });
+            } catch (error) {
+                console.error('Virhe ladattaessa historiaa:', err);
+            }
+        }
+
+        // Kun sivu on ladattu, hae historia
+        window.addEventListener('load',()=> {
+            loadHistory();
+        });
         function addSystemMessage(text) {
             const div = document.createElement('div');
             div.className = 'system-message';
