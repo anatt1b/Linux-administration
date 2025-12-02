@@ -1,3 +1,3 @@
 # Linux-administration
 
-(http://86.50.22.163/)
+http://86.50.22.163/
