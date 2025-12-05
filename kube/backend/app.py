@@ -8,8 +8,8 @@ def get_db_connection():
     return mysql.connector.connect(
         host=os.getenv('DB_HOST', 'mysql'),
         user=os.getenv('DB_USER', 'appuser'),
-        password=os.getenv('DB_PASSWORD', 'apppasword123'),
-        database=os.getenv('DB_NAME','appdb')
+        password=os.getenv('DB_PASSWORD', 'apppassword123'),
+        database=os.getenv('DB_NAME', 'appdb')
     )
 
 @app.route('/api/health')
