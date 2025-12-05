@@ -48,9 +48,9 @@ def load_weather_data():
 
 def main():
     # pieni teksti yläreunaan
-    st.caption("Data päivittyy 15 min välein cronin avulla.")
+    st.caption("Data päivittyy 15 min välein.")
 
-    # automaattinen päivitys (esim. 10 sek välein)
+    # automaattinen päivitys (esim. 1 sek välein)
     st_autorefresh(interval=1000, key="weather-refresh")
 
     # Suomen aika näkyviin
