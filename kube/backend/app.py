@@ -52,6 +52,33 @@ def init_db():
         return jsonify({"message": "Database initialized"})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    
+# UUSI ROUTE: käyttäjän lisääminen
+@app.route('/api/add-user', methods=['POST'])
+def add_user():
+    try:
+        data = request.get_json()
+        name = data.get("name")
+
+        if not name:
+            return jsonify({"error": "Name is required"}), 400
+
+        conn = get_db_connection()
+        cursor = conn.cursor()
+
+        email = f"{name.lower().replace(' ', '.') }@example.com"
+        cursor.execute(
+            "INSERT INTO users (name, email) VALUES (%s, %s)",
+            (name, email)
+        )
+
+        conn.commit()
+        cursor.close()
+        conn.close()
+
+        return jsonify({"message": f"User '{name}' added successfully"})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
