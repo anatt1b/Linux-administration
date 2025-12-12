@@ -1,3 +1,5 @@
+CI/CA testi
+
 # LEMP Stack on Kubernetes
 
 Tämä projekti toteuttaa **LEMP-arkkitehtuurin** Kubernetes-ympäristössä.  
