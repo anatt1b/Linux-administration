@@ -17,7 +17,7 @@ spec:
       containers:
       - name: backend
         image: backend:latest
-        imagePullPolicy: Never  # Käytä paikallista imagea Minikubessa
+        imagePullPolicy: IfNotPresent  # Image pulled from Docker hub if not already present
         ports:
         - containerPort: 5000
         env:
