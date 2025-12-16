@@ -40,6 +40,24 @@ jobs:
             ${{ secrets.DOCKERHUB_USERNAME }}/backend:${{ github.sha }}
           cache-from: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/backend:latest
           cache-to: type=inline
+      
+      #------------------------------
+      # TESTI SKRIPTI
+      #------------------------------
+      - name: Test backend container
+        run: |
+          set -e
+          trap 'docker rm -f backend-test || true' EXIT
+
+          docker run -d --name backend-test -p 5000:5000 \
+          ${{ secrets.DOCKERHUB_USERNAME }}/backend:${{ github.sha }}
+
+          echo "Waiting for backend to start..."
+          sleep 10
+
+          chmod +x tests/test_backend_health.sh
+          ./tests/test_backend_health.sh
+
 
       # -----------------------------
       # FRONTEND IMAGE BUILD & PUSH
